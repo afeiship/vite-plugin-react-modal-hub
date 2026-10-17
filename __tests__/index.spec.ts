@@ -1,3 +1,4 @@
+import vitePlugin from '../src';
 import { deriveKey } from '../src/keyfn';
 import { commonRoot, generateModule } from '../src/codegen';
 
@@ -81,5 +82,53 @@ describe('generateModule', () => {
     });
     expect(code).toContain('import.meta.glob(["/src/modals/*.tsx","!/src/modals/secret/**"], { eager: true })');
     expect(code).toContain('toMap(modalsFiles, "/src/modals/")');
+  });
+});
+
+describe('vitePlugin', () => {
+  test('returns plugin object with name and hooks', () => {
+    const plugin = vitePlugin();
+    expect(plugin.name).toBe('vite-plugin-react-modal-hub');
+    expect(typeof plugin.resolveId).toBe('function');
+    expect(typeof plugin.load).toBe('function');
+  });
+
+  test('resolveId hits virtual:react-modal-hub and misses others', () => {
+    const plugin = vitePlugin();
+    const resolveId = plugin.resolveId as any;
+    expect(resolveId.call({} as any, 'virtual:react-modal-hub')).toBe('\0virtual:react-modal-hub');
+    expect(resolveId.call({} as any, 'other-module')).toBeUndefined();
+  });
+
+  test('load emits default patterns for both groups', () => {
+    const plugin = vitePlugin();
+    const load = plugin.load as any;
+    const code = load.call({} as any, '\0virtual:react-modal-hub');
+    expect(code).toContain('import.meta.glob(["/src/modals/*.tsx","/src/modals/**/index.tsx"], { eager: true })');
+    expect(code).toContain('import.meta.glob(["/src/modals-eager/*.tsx","/src/modals-eager/**/index.tsx"], { eager: true })');
+    expect(code).toContain('export const modals = toMap(modalsFiles, "/src/modals/")');
+  });
+
+  test('load accepts a custom single string pattern (normalized to array)', () => {
+    const plugin = vitePlugin({ modals: '/src/my-modals/*.tsx' });
+    const load = plugin.load as any;
+    const code = load.call({} as any, '\0virtual:react-modal-hub');
+    expect(code).toContain('import.meta.glob(["/src/my-modals/*.tsx"], { eager: true })');
+    expect(code).toContain('export const modals = toMap(modalsFiles, "/src/my-modals/")');
+  });
+
+  test('load accepts custom pattern arrays with shared root', () => {
+    const plugin = vitePlugin({ eagerModals: ['/src/now/*.tsx', '/src/always/*.tsx'] });
+    const load = plugin.load as any;
+    const code = load.call({} as any, '\0virtual:react-modal-hub');
+    expect(code).toContain('import.meta.glob(["/src/now/*.tsx","/src/always/*.tsx"], { eager: true })');
+    expect(code).toContain('export const eagerModals = toMap(eagerModalsFiles, "/src/")');
+  });
+
+  test('default export shape: factory function + module default object', () => {
+    expect(typeof vitePlugin).toBe('function');
+    const load = (vitePlugin() as any).load;
+    const code = load.call({} as any, '\0virtual:react-modal-hub');
+    expect(code).toContain('export default { modals, eagerModals };');
   });
 });
