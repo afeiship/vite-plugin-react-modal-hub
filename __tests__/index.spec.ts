@@ -73,4 +73,13 @@ describe('generateModule', () => {
     expect(code).toContain('mod.default || mod');
     expect(code).toContain('Object.prototype.hasOwnProperty.call(map, key)');
   });
+
+  test('keeps ! exclusions in glob but strips them from the root', () => {
+    const code = generateModule({
+      modals: ['/src/modals/*.tsx', '!/src/modals/secret/**'],
+      eagerModals: ['/src/modals-eager/*.tsx'],
+    });
+    expect(code).toContain('import.meta.glob(["/src/modals/*.tsx","!/src/modals/secret/**"], { eager: true })');
+    expect(code).toContain('toMap(modalsFiles, "/src/modals/")');
+  });
 });
