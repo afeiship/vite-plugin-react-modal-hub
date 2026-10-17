@@ -13,18 +13,33 @@ npm install @jswork/vite-plugin-react-modal-hub
 
 ## usage
 ```js
+// vite.config.ts
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import vitePlugin from '@jswork/vite-plugin-react-modal-hub';
+import modalHub from '@jswork/vite-plugin-react-modal-hub';
 
-// https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react(), vitePlugin()],
-  server: {
-    host: '0.0.0.0'
-  }
+  plugins: [react(), modalHub()],
 });
 ```
+
+```tsx
+// provider.tsx
+import modals from 'virtual:react-modal-hub';
+import { ModalHub } from '@jswork/react-modal-hub';
+
+export default function Provider({ children, ready }) {
+  return <ModalHub {...modals} ready={ready}>{children}</ModalHub>;
+}
+```
+
+## options
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `modals` | `string \| string[]` | `['/src/modals/*.tsx', '/src/modals/**/index.tsx']` | Globs for normal modals |
+| `eagerModals` | `string \| string[]` | `['/src/modals-eager/*.tsx', '/src/modals-eager/**/index.tsx']` | Globs for eager modals (ignore `ready`) |
+
+Globs are relative to the project root; `!` excludes are supported. Registration keys derive from each path relative to the group's common root: `user/index.tsx` → `user`, `date-picker.tsx` → `datePicker`, `confirm/delete/index.tsx` → `confirm.delete`.
 
 ## license
 Code released under [the MIT license](https://github.com/afeiship/vite-plugin-react-modal-hub/blob/master/LICENSE.txt).
