@@ -43,4 +43,8 @@ describe('commonRoot', () => {
   test('no common prefix falls back to /', () => {
     expect(commonRoot(['/a/*.tsx', '/b/*.tsx'])).toBe('/');
   });
+
+  test('excludes ! patterns from root derivation', () => {
+    expect(commonRoot(['/src/modals/*.tsx', '!/src/modals/secret/**'])).toBe('/src/modals/');
+  });
 });
