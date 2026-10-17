@@ -1,37 +1,42 @@
-# rails-module-habtm
-> Rails module association HABTM.
+# vite-plugin-react-modal-hub
+> Zero-config modal discovery and registration for @jswork/react-modal-hub.
 
-## step to step:
-+ create the models:
-```bash
-rails g model Author name:string
-rails g model Book title:string
-rails g migration CreateJoinTableAuthorsBooks authors books
-```
-+ HABTM association in our models like this:
-```rb
-class Book < ApplicationRecord
-  has_and_belongs_to_many :authors
-end
+[![version][version-image]][version-url]
+[![license][license-image]][license-url]
+[![size][size-image]][size-url]
+[![download][download-image]][download-url]
 
-class Author < ApplicationRecord
-  has_and_belongs_to_many :books
-end
+## installation
+```shell
+npm install @jswork/vite-plugin-react-modal-hub
 ```
 
-+ we can create our database tables by running
-```bash
-rake db:migrate
+## usage
+```js
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import vitePlugin from '@jswork/vite-plugin-react-modal-hub';
+
+// https://vitejs.dev/config/
+export default defineConfig({
+  plugins: [react(), vitePlugin()],
+  server: {
+    host: '0.0.0.0'
+  }
+});
 ```
 
-+ seed codes:
-```rb
-herman = Author.create name: 'Herman Melville'
-moby = Book.create title: 'Moby Dick'
-herman.books << moby
+## license
+Code released under [the MIT license](https://github.com/afeiship/vite-plugin-react-modal-hub/blob/master/LICENSE.txt).
 
+[version-image]: https://img.shields.io/npm/v/@jswork/vite-plugin-react-modal-hub
+[version-url]: https://npmjs.org/package/@jswork/vite-plugin-react-modal-hub
 
-moby.authors
-herman.books
-herman.books.where(title: 'Moby Dick')
-```
+[license-image]: https://img.shields.io/npm/l/@jswork/vite-plugin-react-modal-hub
+[license-url]: https://github.com/afeiship/vite-plugin-react-modal-hub/blob/master/LICENSE.txt
+
+[size-image]: https://img.shields.io/bundlephobia/minzip/@jswork/vite-plugin-react-modal-hub
+[size-url]: https://github.com/afeiship/vite-plugin-react-modal-hub/blob/master/dist/index.min.js
+
+[download-image]: https://img.shields.io/npm/dm/@jswork/vite-plugin-react-modal-hub
+[download-url]: https://www.npmjs.com/package/@jswork/vite-plugin-react-modal-hub
