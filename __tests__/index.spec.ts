@@ -1,5 +1,5 @@
 import { deriveKey } from '../src/keyfn';
-import { commonRoot } from '../src/codegen';
+import { commonRoot, generateModule } from '../src/codegen';
 
 describe('deriveKey', () => {
   test('plain file: login.tsx → login', () => {
@@ -46,5 +46,31 @@ describe('commonRoot', () => {
 
   test('excludes ! patterns from root derivation', () => {
     expect(commonRoot(['/src/modals/*.tsx', '!/src/modals/secret/**'])).toBe('/src/modals/');
+  });
+});
+
+describe('generateModule', () => {
+  const options = {
+    modals: ['/src/modals/*.tsx', '/src/modals/**/index.tsx'],
+    eagerModals: ['/src/modals-eager/*.tsx', '/src/modals-eager/**/index.tsx'],
+  };
+
+  test('emits import.meta.glob for both groups with derived roots and default export', () => {
+    const code = generateModule(options);
+    expect(code).toContain('import.meta.glob(["/src/modals/*.tsx","/src/modals/**/index.tsx"], { eager: true })');
+    expect(code).toContain('import.meta.glob(["/src/modals-eager/*.tsx","/src/modals-eager/**/index.tsx"], { eager: true })');
+    expect(code).toContain('export const modals = toMap(modalsFiles, "/src/modals/")');
+    expect(code).toContain('export const eagerModals = toMap(eagerModalsFiles, "/src/modals-eager/")');
+    expect(code).toContain('export default { modals, eagerModals };');
+  });
+
+  test('emits toMap with injected deriveKey, default fallback and duplicate warn', () => {
+    const code = generateModule(options);
+    expect(code).toContain('function toMap(files, root)');
+    expect(code).toContain('const deriveKey = ');
+    expect(code).toContain('duplicate modal key');
+    expect(code).toContain('console.warn');
+    expect(code).toContain('mod.default || mod');
+    expect(code).toContain('Object.prototype.hasOwnProperty.call(map, key)');
   });
 });
