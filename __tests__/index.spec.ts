@@ -1,4 +1,5 @@
 import { deriveKey } from '../src/keyfn';
+import { commonRoot } from '../src/codegen';
 
 describe('deriveKey', () => {
   test('plain file: login.tsx → login', () => {
@@ -23,5 +24,23 @@ describe('deriveKey', () => {
 
   test('empty after fold falls back to index: index.tsx → index', () => {
     expect(deriveKey('/src/modals/index.tsx', '/src/modals/')).toBe('index');
+  });
+});
+
+describe('commonRoot', () => {
+  test('single pattern keeps dir prefix up to first *', () => {
+    expect(commonRoot(['/src/modals/*.tsx'])).toBe('/src/modals/');
+  });
+
+  test('multiple patterns with same prefix share the prefix', () => {
+    expect(commonRoot(['/src/modals/*.tsx', '/src/modals/**/index.tsx'])).toBe('/src/modals/');
+  });
+
+  test('multiple patterns cut back to common directory', () => {
+    expect(commonRoot(['/src/a/*.tsx', '/src/b/*.tsx'])).toBe('/src/');
+  });
+
+  test('no common prefix falls back to /', () => {
+    expect(commonRoot(['/a/*.tsx', '/b/*.tsx'])).toBe('/');
   });
 });
