@@ -33,12 +33,21 @@ export default function Provider({ children, ready }) {
 }
 ```
 
+## types
+Add one line to `tsconfig.json` for global typing of the virtual module (no per-file triple-slash reference needed):
+```json
+{
+  "compilerOptions": {
+    "types": ["@jswork/vite-plugin-react-modal-hub/client"]
+  }
+}
+```
+
 ## options
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
 | `modals` | `string \| string[]` | `['/src/shared/modals/*.tsx', '/src/shared/modals/**/index.tsx']` | Globs for normal modals |
 | `modalsEager` | `string \| string[]` | `['/src/shared/modals-eager/*.tsx', '/src/shared/modals-eager/**/index.tsx']` | Globs for eager modals (ignore `ready`) |
-| `eagerModals` | `string \| string[]` | - | Alias for `modalsEager` (deprecated) |
 
 Globs are relative to the project root; `!` excludes are supported. Registration keys derive from each path relative to the group's common root: `user/index.tsx` → `user`, `date-picker.tsx` → `datePicker`, `confirm/delete/index.tsx` → `confirm.delete`.
 

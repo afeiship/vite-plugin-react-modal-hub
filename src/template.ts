@@ -47,6 +47,5 @@ const modalsEagerFiles = import.meta.glob(${JSON.stringify(modalsEager)}, { eage
 
 export const modals = toMap(modalsFiles, ${JSON.stringify(modalsRoot)}, deriveKey);
 export const modalsEager = toMap(modalsEagerFiles, ${JSON.stringify(modalsEagerRoot)}, deriveKey);
-export const eagerModals = modalsEager;
-export default { modals, modalsEager, eagerModals };
+export default { modals, modalsEager };
 `.trim();

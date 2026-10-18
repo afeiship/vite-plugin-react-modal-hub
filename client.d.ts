@@ -3,8 +3,6 @@ declare module 'virtual:react-modal-hub' {
 
   export const modals: ModalMap;
   export const modalsEager: ModalMap;
-  /** @deprecated Use `modalsEager` instead. */
-  export const eagerModals: ModalMap;
-  const hub: { modals: ModalMap; modalsEager: ModalMap; eagerModals: ModalMap };
+  const hub: { modals: ModalMap; modalsEager: ModalMap };
   export default hub;
 }

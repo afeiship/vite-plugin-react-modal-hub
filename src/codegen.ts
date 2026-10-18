@@ -27,8 +27,6 @@ export interface GenerateModuleOptions {
   modals: string[];
   /** Glob patterns for eager modals. */
   modalsEager?: string[];
-  /** @deprecated Use `modalsEager` instead. */
-  eagerModals?: string[];
 }
 
 /**
@@ -36,7 +34,7 @@ export interface GenerateModuleOptions {
  * @param options - Normalized (array) glob option values
  */
 export const generateModule = (options: GenerateModuleOptions): string => {
-  const modalsEager = options.modalsEager ?? options.eagerModals ?? [];
+  const modalsEager = options.modalsEager ?? [];
   return buildModule(
     options.modals,
     modalsEager,

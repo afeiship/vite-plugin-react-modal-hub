@@ -12,13 +12,9 @@ export interface ModalHubPluginOptions {
    * @default ['/src/shared/modals-eager/*.tsx', '/src/shared/modals-eager/**&#47;index.tsx']
    */
   modalsEager?: string | string[];
-  /**
-   * @deprecated Use `modalsEager` instead.
-   */
-  eagerModals?: string | string[];
 }
 
-const defaults: Required<Omit<ModalHubPluginOptions, 'eagerModals'>> = {
+const defaults: Required<ModalHubPluginOptions> = {
   modals: ['/src/shared/modals/*.tsx', '/src/shared/modals/**/index.tsx'],
   modalsEager: ['/src/shared/modals-eager/*.tsx', '/src/shared/modals-eager/**/index.tsx'],
 };
@@ -28,7 +24,7 @@ const toArr = (value: string | string[]): string[] => (Array.isArray(value) ? va
 const factory = (inOptions?: ModalHubPluginOptions): Plugin => {
   const options = {
     modals: toArr(inOptions?.modals ?? defaults.modals),
-    modalsEager: toArr(inOptions?.modalsEager ?? inOptions?.eagerModals ?? defaults.modalsEager),
+    modalsEager: toArr(inOptions?.modalsEager ?? defaults.modalsEager),
   };
 
   const virtualModuleId = 'virtual:react-modal-hub';
