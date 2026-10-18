@@ -60,15 +60,15 @@ describe('generateModule', () => {
     const code = generateModule(options);
     expect(code).toContain('import.meta.glob(["/src/modals/*.tsx","/src/modals/**/index.tsx"], { eager: true })');
     expect(code).toContain('import.meta.glob(["/src/modals-eager/*.tsx","/src/modals-eager/**/index.tsx"], { eager: true })');
-    expect(code).toContain('export const modals = toMap(modalsFiles, "/src/modals/")');
-    expect(code).toContain('export const modalsEager = toMap(modalsEagerFiles, "/src/modals-eager/")');
+    expect(code).toContain('export const modals = toMap(modalsFiles, "/src/modals/", deriveKey)');
+    expect(code).toContain('export const modalsEager = toMap(modalsEagerFiles, "/src/modals-eager/", deriveKey)');
     expect(code).toContain('export const eagerModals = modalsEager;');
     expect(code).toContain('export default { modals, modalsEager, eagerModals };');
   });
 
   test('emits toMap with injected deriveKey, default fallback and duplicate warn', () => {
     const code = generateModule(options);
-    expect(code).toContain('function toMap(files, root)');
+    expect(code).toContain('function toMap(files, root, deriveKey)');
     expect(code).toContain('const deriveKey = ');
     expect(code).toContain('duplicate modal key');
     expect(code).toContain('console.warn');
@@ -82,7 +82,7 @@ describe('generateModule', () => {
       modalsEager: ['/src/modals-eager/*.tsx'],
     });
     expect(code).toContain('import.meta.glob(["/src/modals/*.tsx","!/src/modals/secret/**"], { eager: true })');
-    expect(code).toContain('toMap(modalsFiles, "/src/modals/")');
+    expect(code).toContain('toMap(modalsFiles, "/src/modals/", deriveKey)');
   });
 
   test('supports legacy eagerModals option name in generateModule', () => {
@@ -91,7 +91,7 @@ describe('generateModule', () => {
       eagerModals: ['/src/modals-eager/*.tsx'],
     });
     expect(code).toContain('import.meta.glob(["/src/modals-eager/*.tsx"], { eager: true })');
-    expect(code).toContain('export const modalsEager = toMap(modalsEagerFiles, "/src/modals-eager/")');
+    expect(code).toContain('export const modalsEager = toMap(modalsEagerFiles, "/src/modals-eager/", deriveKey)');
   });
 });
 
@@ -116,8 +116,8 @@ describe('vitePlugin', () => {
     const code = load.call({} as any, '\0virtual:react-modal-hub');
     expect(code).toContain('import.meta.glob(["/src/shared/modals/*.tsx","/src/shared/modals/**/index.tsx"], { eager: true })');
     expect(code).toContain('import.meta.glob(["/src/shared/modals-eager/*.tsx","/src/shared/modals-eager/**/index.tsx"], { eager: true })');
-    expect(code).toContain('export const modals = toMap(modalsFiles, "/src/shared/modals/")');
-    expect(code).toContain('export const modalsEager = toMap(modalsEagerFiles, "/src/shared/modals-eager/")');
+    expect(code).toContain('export const modals = toMap(modalsFiles, "/src/shared/modals/", deriveKey)');
+    expect(code).toContain('export const modalsEager = toMap(modalsEagerFiles, "/src/shared/modals-eager/", deriveKey)');
     expect(code).toContain('export const eagerModals = modalsEager;');
   });
 
@@ -126,7 +126,7 @@ describe('vitePlugin', () => {
     const load = plugin.load as any;
     const code = load.call({} as any, '\0virtual:react-modal-hub');
     expect(code).toContain('import.meta.glob(["/src/my-modals/*.tsx"], { eager: true })');
-    expect(code).toContain('export const modals = toMap(modalsFiles, "/src/my-modals/")');
+    expect(code).toContain('export const modals = toMap(modalsFiles, "/src/my-modals/", deriveKey)');
   });
 
   test('load accepts custom pattern arrays with shared root', () => {
@@ -134,7 +134,7 @@ describe('vitePlugin', () => {
     const load = plugin.load as any;
     const code = load.call({} as any, '\0virtual:react-modal-hub');
     expect(code).toContain('import.meta.glob(["/src/now/*.tsx","/src/always/*.tsx"], { eager: true })');
-    expect(code).toContain('export const modalsEager = toMap(modalsEagerFiles, "/src/")');
+    expect(code).toContain('export const modalsEager = toMap(modalsEagerFiles, "/src/", deriveKey)');
   });
 
   test('load accepts legacy eagerModals option', () => {
@@ -142,7 +142,7 @@ describe('vitePlugin', () => {
     const load = plugin.load as any;
     const code = load.call({} as any, '\0virtual:react-modal-hub');
     expect(code).toContain('import.meta.glob(["/src/now/*.tsx","/src/always/*.tsx"], { eager: true })');
-    expect(code).toContain('export const modalsEager = toMap(modalsEagerFiles, "/src/")');
+    expect(code).toContain('export const modalsEager = toMap(modalsEagerFiles, "/src/", deriveKey)');
   });
 
   test('default export shape: factory function + module default object', () => {
