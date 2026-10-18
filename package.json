@@ -1,6 +1,6 @@
 {
   "name": "@jswork/vite-plugin-react-modal-hub",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Zero-config modal discovery and registration for @jswork/react-modal-hub.",
   "main": "./dist/index.cjs.js",
   "module": "./dist/index.esm.js",
