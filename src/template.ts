@@ -25,23 +25,24 @@ export function toMap(files, root) {
  * Runtime helpers (deriveKey/toMap) are injected via `toString()` so they
  * live here as real code instead of inline string literals.
  * @param modals - Normalized glob patterns for normal modals
- * @param eagerModals - Normalized glob patterns for eager modals
+ * @param modalsEager - Normalized glob patterns for eager modals
  * @param modalsRoot - Common directory root of `modals`
- * @param eagerModalsRoot - Common directory root of `eagerModals`
+ * @param modalsEagerRoot - Common directory root of `modalsEager`
  */
 export const buildModule = (
   modals: string[],
-  eagerModals: string[],
+  modalsEager: string[],
   modalsRoot: string,
-  eagerModalsRoot: string,
+  modalsEagerRoot: string,
 ): string => `
 const deriveKey = ${deriveKey.toString()};
 const toMap = ${toMap.toString()};
 
 const modalsFiles = import.meta.glob(${JSON.stringify(modals)}, { eager: true });
-const eagerModalsFiles = import.meta.glob(${JSON.stringify(eagerModals)}, { eager: true });
+const modalsEagerFiles = import.meta.glob(${JSON.stringify(modalsEager)}, { eager: true });
 
 export const modals = toMap(modalsFiles, ${JSON.stringify(modalsRoot)});
-export const eagerModals = toMap(eagerModalsFiles, ${JSON.stringify(eagerModalsRoot)});
-export default { modals, eagerModals };
+export const modalsEager = toMap(modalsEagerFiles, ${JSON.stringify(modalsEagerRoot)});
+export const eagerModals = modalsEager;
+export default { modals, modalsEager, eagerModals };
 `.trim();

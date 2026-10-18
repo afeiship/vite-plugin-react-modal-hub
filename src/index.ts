@@ -4,19 +4,23 @@ import { generateModule } from './codegen';
 export interface ModalHubPluginOptions {
   /**
    * Glob(s) for normal modals (relative to project root, `!` excludes supported).
-   * @default ['/src/modals/*.tsx', '/src/modals/**&#47;index.tsx']
+   * @default ['/src/shared/modals/*.tsx', '/src/shared/modals/**&#47;index.tsx']
    */
   modals?: string | string[];
   /**
    * Glob(s) for eager modals that ignore `ready`.
-   * @default ['/src/modals-eager/*.tsx', '/src/modals-eager/**&#47;index.tsx']
+   * @default ['/src/shared/modals-eager/*.tsx', '/src/shared/modals-eager/**&#47;index.tsx']
+   */
+  modalsEager?: string | string[];
+  /**
+   * @deprecated Use `modalsEager` instead.
    */
   eagerModals?: string | string[];
 }
 
-const defaults: Required<ModalHubPluginOptions> = {
-  modals: ['/src/modals/*.tsx', '/src/modals/**/index.tsx'],
-  eagerModals: ['/src/modals-eager/*.tsx', '/src/modals-eager/**/index.tsx'],
+const defaults: Required<Omit<ModalHubPluginOptions, 'eagerModals'>> = {
+  modals: ['/src/shared/modals/*.tsx', '/src/shared/modals/**/index.tsx'],
+  modalsEager: ['/src/shared/modals-eager/*.tsx', '/src/shared/modals-eager/**/index.tsx'],
 };
 
 const toArr = (value: string | string[]): string[] => (Array.isArray(value) ? value : [value]);
@@ -24,7 +28,7 @@ const toArr = (value: string | string[]): string[] => (Array.isArray(value) ? va
 const factory = (inOptions?: ModalHubPluginOptions): Plugin => {
   const options = {
     modals: toArr(inOptions?.modals ?? defaults.modals),
-    eagerModals: toArr(inOptions?.eagerModals ?? defaults.eagerModals),
+    modalsEager: toArr(inOptions?.modalsEager ?? inOptions?.eagerModals ?? defaults.modalsEager),
   };
 
   const virtualModuleId = 'virtual:react-modal-hub';

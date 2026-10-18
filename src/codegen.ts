@@ -26,17 +26,21 @@ export interface GenerateModuleOptions {
   /** Glob patterns for normal modals. */
   modals: string[];
   /** Glob patterns for eager modals. */
-  eagerModals: string[];
+  modalsEager?: string[];
+  /** @deprecated Use `modalsEager` instead. */
+  eagerModals?: string[];
 }
 
 /**
  * Generate the source of the `virtual:react-modal-hub` module.
  * @param options - Normalized (array) glob option values
  */
-export const generateModule = (options: GenerateModuleOptions): string =>
-  buildModule(
+export const generateModule = (options: GenerateModuleOptions): string => {
+  const modalsEager = options.modalsEager ?? options.eagerModals ?? [];
+  return buildModule(
     options.modals,
-    options.eagerModals,
+    modalsEager,
     commonRoot(options.modals),
-    commonRoot(options.eagerModals),
+    commonRoot(modalsEager),
   );
+};

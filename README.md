@@ -36,8 +36,9 @@ export default function Provider({ children, ready }) {
 ## options
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
-| `modals` | `string \| string[]` | `['/src/modals/*.tsx', '/src/modals/**/index.tsx']` | Globs for normal modals |
-| `eagerModals` | `string \| string[]` | `['/src/modals-eager/*.tsx', '/src/modals-eager/**/index.tsx']` | Globs for eager modals (ignore `ready`) |
+| `modals` | `string \| string[]` | `['/src/shared/modals/*.tsx', '/src/shared/modals/**/index.tsx']` | Globs for normal modals |
+| `modalsEager` | `string \| string[]` | `['/src/shared/modals-eager/*.tsx', '/src/shared/modals-eager/**/index.tsx']` | Globs for eager modals (ignore `ready`) |
+| `eagerModals` | `string \| string[]` | - | Alias for `modalsEager` (deprecated) |
 
 Globs are relative to the project root; `!` excludes are supported. Registration keys derive from each path relative to the group's common root: `user/index.tsx` → `user`, `date-picker.tsx` → `datePicker`, `confirm/delete/index.tsx` → `confirm.delete`.
 
